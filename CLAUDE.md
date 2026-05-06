@@ -65,6 +65,22 @@ npm run db:gen-local  # regenerate Drizzle SQLite migration from schema.ts
 - Error messages: literal and helpful. "Password needs at least 6 characters." not "That password is a bit shy."
 - Module blurbs describe what the module does, plainly. Visual personality lives in colors and illustrations, not adjectives.
 
+## Sync layer (`shared/sync/`)
+
+Local-first means writes go to SQLite first; the sync layer is what gets them to Supabase eventually. Public API (always import from `@/shared/sync`):
+
+- **`enqueuePushChallenge(id)` / `enqueuePushPot(id)`** — call this **after every local mutation** of that table. It records the row in an AsyncStorage outbox and fires a non-blocking push attempt. Outbox survives app restarts; failed pushes retry on next sync.
+- **`syncAll()`** — flushes outbox, then pulls remote changes since the last watermark. Called automatically on sign-in and app foreground via `useSync` (mounted once in root layout). Manual trigger only needed for "pull-to-refresh"-style UX.
+- **`useSync()`** — hook that wires syncAll() to session + AppState changes. Don't call it from feature code; it lives once in `app/_layout.tsx`.
+
+Conflict policy: last-write-wins via `updated_at`. `flushOutbox` always runs before pulls each sync, so pending local writes hit the cloud before remote rows are merged in. Single-user-most-of-the-time apps stay consistent with this rule.
+
+**Rules:**
+- Don't query Supabase directly in feature code. Read from local SQLite (Drizzle); the sync layer keeps it fresh.
+- Every mutation function (e.g. `createChallenge`, `openPot`) must end with the matching `enqueuePush*(id)` call. Easy to forget — that row would never reach the cloud.
+- Deletions aren't synced yet (no tombstone table). If we ever support delete, add a `tombstones` table + sync.
+- Conversion between Drizzle (camelCase, SQLite types) and Supabase (snake_case, Postgres types) lives in `shared/sync/converters.ts`. Add a converter pair when adding a new synced table.
+
 ## Forms & keyboard
 
 - Use `<Screen scroll keyboardAware>` for any screen with a `TextInput`. The `keyboardAware` prop wraps the content in `KeyboardAvoidingView` so inputs lift above the keyboard. `scroll` lets the user scroll if content still doesn't fit.

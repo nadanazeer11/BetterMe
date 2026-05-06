@@ -19,6 +19,7 @@ import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { AuthProvider, useAuth } from "@/shared/auth/AuthProvider";
 import { db } from "@/shared/db/client";
 import migrations from "@/shared/db/drizzle/migrations";
+import { useSync } from "@/shared/sync";
 import { Screen } from "@/shared/ui/Screen";
 import { SoftCard } from "@/shared/ui/SoftCard";
 import { Heading } from "@/shared/ui/Heading";
@@ -41,6 +42,11 @@ function AuthGate() {
     }
   }, [session, loading, segments, router]);
 
+  return null;
+}
+
+function SyncRunner() {
+  useSync();
   return null;
 }
 
@@ -85,6 +91,7 @@ export default function RootLayout() {
         <MigrationGate>
           <AuthProvider>
             <AuthGate />
+            <SyncRunner />
             <Stack
               screenOptions={{
                 headerShown: false,
