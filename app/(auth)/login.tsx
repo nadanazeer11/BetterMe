@@ -30,22 +30,17 @@ export default function Login() {
   };
 
   return (
-    <Screen scroll={false}>
+    <Screen scroll keyboardAware>
       <MotiView
         from={{ opacity: 0, translateY: 8 }}
         animate={{ opacity: 1, translateY: 0 }}
-        transition={{ type: "timing", duration: 500 }}
-        className="flex-1 justify-center gap-8"
+        transition={{ type: "timing", duration: 400 }}
+        className="flex-1 justify-center gap-8 py-10"
       >
         <View>
-          <Body tone="soft" size="sm" className="uppercase tracking-widest">
-            welcome back
-          </Body>
-          <Heading size="xl" className="mt-2">
-            Soft hello
-          </Heading>
+          <Heading size="xl">Welcome back</Heading>
           <Body tone="soft" className="mt-2">
-            Sign in to tend your garden.
+            Sign in to your account.
           </Body>
         </View>
 
@@ -54,7 +49,7 @@ export default function Login() {
             label="Email"
             value={email}
             onChangeText={setEmail}
-            placeholder="you@somewhere.com"
+            placeholder="you@example.com"
             autoCapitalize="none"
             autoComplete="email"
             keyboardType="email-address"
@@ -64,7 +59,7 @@ export default function Login() {
             label="Password"
             value={password}
             onChangeText={setPassword}
-            placeholder="••••••••"
+            placeholder="Your password"
             secureTextEntry
             autoComplete="password"
             error={error}
@@ -81,9 +76,9 @@ export default function Login() {
           <Link href="/(auth)/register" asChild>
             <Pressable>
               <Body tone="soft" className="text-center">
-                New here?{" "}
+                Don't have an account?{" "}
                 <Body className="font-display-semibold" style={{ color: palette.lavender.deep }}>
-                  Make a softer life
+                  Create one
                 </Body>
               </Body>
             </Pressable>

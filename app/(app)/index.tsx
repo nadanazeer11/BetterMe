@@ -19,22 +19,22 @@ type Module = {
 const MODULES: Module[] = [
   {
     id: "spending-challenge",
-    title: "Spending garden",
-    blurb: "A pot for every day. Open today's, see your allowance, water it well.",
+    title: "Spending challenge",
+    blurb: "Random daily allowance from a fixed budget. Log what you spent each day.",
     hue: "sage",
     status: "soon",
   },
   {
     id: "daily-rules",
     title: "Daily rules",
-    blurb: "Tiny promises to yourself, checked off one soft tap at a time.",
+    blurb: "Things to do (or avoid) every day.",
     hue: "blush",
     status: "soon",
   },
   {
-    id: "monthly-rules",
-    title: "Monthly rituals",
-    blurb: "Bigger kindnesses you owe yourself. A massage. A long walk.",
+    id: "monthly-habits",
+    title: "Monthly habits",
+    blurb: "Things to do once or twice a month.",
     hue: "lavender",
     status: "soon",
   },
@@ -48,23 +48,15 @@ export default function Home() {
       <MotiView
         from={{ opacity: 0, translateY: 8 }}
         animate={{ opacity: 1, translateY: 0 }}
-        transition={{ type: "timing", duration: 500 }}
+        transition={{ type: "timing", duration: 400 }}
         className="pt-6 pb-8"
       >
-        <Body tone="soft" size="sm" className="uppercase tracking-widest">
-          Hello, you
-        </Body>
-        <Heading size="xl" className="mt-2">
-          betterMe
-        </Heading>
-        <Body tone="soft" className="mt-2">
-          A soft place to keep the small promises you make to yourself.
-        </Body>
+        <Heading size="xl">betterMe</Heading>
       </MotiView>
 
       <View className="gap-5">
         {MODULES.map((m, i) => (
-          <MotiView key={m.id} {...tileEntry(150 + i * 90)}>
+          <MotiView key={m.id} {...tileEntry(120 + i * 80)}>
             <Pressable onPress={() => haptic.tap()}>
               <SoftCard hue={m.hue} tone="soft">
                 <View className="flex-row items-center justify-between mb-2">

@@ -43,6 +43,20 @@ npm run db:sync   # db:push + db:types in one go (the usual command)
 - **Shared layer** under `shared/`: `auth/`, `db/`, `sync/`, `ui/`, `theme/`, `hooks/`. Reusable across modules.
 - **Aesthetic is load-bearing.** Use `shared/ui/*` primitives (`Screen`, `SoftCard`, `PastelButton`, `PastelInput`, `Heading`, `Body`). Pastel palette in `tailwind.config.js` and `shared/theme/colors.ts`. Quicksand fonts. Soft shadows tinted by hue. Moti for entrance + state animations.
 
+## Voice & copy
+
+- **Visual aesthetic = soft. Copy = direct.** The pastel palette and gentle animations carry the warmth. The words don't need to.
+- **Don't lean on the garden/pot metaphor in copy.** "Spending garden", "tend your garden", "water it well", "soft hello", "kindnesses you owe yourself" — all out. Pots are a *visual* device, not a verbal one.
+- Use plain, functional sentences. "Sign in to your account." beats "Sign in to tend your garden."
+- Skip decorative overlines like "welcome back" or "hello, you" above headings. The heading itself is enough.
+- Error messages: literal and helpful. "Password needs at least 6 characters." not "That password is a bit shy."
+- Module blurbs describe what the module does, plainly. Visual personality lives in colors and illustrations, not adjectives.
+
+## Forms & keyboard
+
+- Use `<Screen scroll keyboardAware>` for any screen with a `TextInput`. The `keyboardAware` prop wraps the content in `KeyboardAvoidingView` so inputs lift above the keyboard. `scroll` lets the user scroll if content still doesn't fit.
+- Set `keyboardShouldPersistTaps="handled"` (already done in `Screen`) so tapping outside dismisses the keyboard naturally.
+
 ## Env vars
 
 - `.env.local` (gitignored) holds real values.
