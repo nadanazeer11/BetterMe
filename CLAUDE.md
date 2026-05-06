@@ -10,30 +10,43 @@ Plan of record: `~/.claude/plans/delightful-crafting-wreath.md`.
 
 ## Database & migration workflow (READ THIS)
 
-Schema lives in SQL files under `supabase/migrations/<timestamp>_<name>.sql`. **Git is the source of truth.** Do not edit schema in the Supabase Dashboard's Table Editor — those changes will diverge from the migrations.
+There are **two parallel schemas** that must stay in sync:
+
+1. **Remote (Supabase / Postgres)** — `supabase/migrations/<timestamp>_<name>.sql`. Source of truth for the cloud schema. Includes RLS policies.
+2. **Local (SQLite / Drizzle)** — `shared/db/schema.ts` (TypeScript DSL) → generates `shared/db/drizzle/*.sql`. Source of truth for the on-device schema.
+
+Different SQL dialects (Postgres vs SQLite), same logical schema. Each schema change touches both.
 
 ### To make a schema change:
 
 1. Generate a UTC timestamp: `date -u +%Y%m%d%H%M%S`.
-2. Create `supabase/migrations/<that-timestamp>_<short_name>.sql`.
-3. Write the SQL (CREATE TABLE / ALTER TABLE / RLS policies / etc.). For destructive changes, include a one-line comment explaining intent.
-4. Run `npm run db:sync` — pushes the migration to Supabase **and** regenerates `shared/db/database.types.ts`.
-5. Commit the new migration file **and** the regenerated `database.types.ts` in the **same commit**. They are inseparable.
+2. Write the **remote** migration: `supabase/migrations/<timestamp>_<short_name>.sql` (Postgres syntax + any RLS).
+3. Update **local** Drizzle schema: edit `shared/db/schema.ts` to match.
+4. Run `npm run db:sync` — pushes Postgres migration and regenerates `shared/db/database.types.ts`.
+5. Run `npm run db:gen-local` — generates a new SQLite migration under `shared/db/drizzle/` from the updated `schema.ts`.
+6. Commit **all four pieces in one commit**:
+   - `supabase/migrations/<new>.sql`
+   - `shared/db/database.types.ts` (regenerated)
+   - `shared/db/schema.ts` (updated)
+   - `shared/db/drizzle/<new>.sql` + `shared/db/drizzle/meta/*` (regenerated)
 
 ### Hard rules:
 
-- **Never hand-edit `shared/db/database.types.ts`.** It is generated from the live schema. Edits will be clobbered next sync.
-- **Never make schema changes in the Supabase Dashboard.** If you discover dashboard drift, run `npm run db:diff` to capture it as a new migration, review it, then `db:sync`.
+- **Never hand-edit `shared/db/database.types.ts`** — generated from remote schema. Clobbered next sync.
+- **Never hand-edit `shared/db/drizzle/*.sql` or `shared/db/drizzle/meta/*`** — generated from `schema.ts`. Clobbered next `db:gen-local`.
+- **Never make schema changes in the Supabase Dashboard** Table Editor. Migrations only — git is the source of truth. If drift happened, capture it with `npm run db:diff` and review.
+- Remote and local schemas must stay in lockstep. Renaming a column in one without the other will break the sync layer.
 - The init migration `supabase/migrations/20260506000000_init.sql` is already applied (marked via `migration repair`). Do not re-run it.
-- Keep RLS policies in the same migration as the table they protect.
+- Keep RLS policies in the same Supabase migration as the table they protect.
 
 ### Commands:
 
 ```bash
-npm run db:diff   # generate a migration from remote drift (rare, safety net)
-npm run db:push   # apply local migrations to remote
-npm run db:types  # regenerate TS types from remote schema
-npm run db:sync   # db:push + db:types in one go (the usual command)
+npm run db:diff       # generate a migration from remote drift (safety net)
+npm run db:push       # apply local migrations to remote Supabase
+npm run db:types      # regenerate Supabase TS types
+npm run db:sync       # db:push + db:types (the usual remote command)
+npm run db:gen-local  # regenerate Drizzle SQLite migration from schema.ts
 ```
 
 ## Architecture principles
