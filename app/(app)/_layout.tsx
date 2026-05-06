@@ -1,0 +1,13 @@
+import { Stack } from "expo-router";
+
+export default function AppLayout() {
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: "#FFF8F0" },
+        animation: "fade",
+      }}
+    />
+  );
+}
