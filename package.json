@@ -4,11 +4,14 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
-    "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "db:push": "npx -y supabase db push",
+    "db:diff": "npx -y supabase db diff -f new_migration",
+    "db:types": "npx -y supabase gen types typescript --linked > shared/db/database.types.ts",
+    "db:sync": "npm run db:push && npm run db:types"
   },
   "dependencies": {
     "@expo-google-fonts/quicksand": "^0.4.1",
