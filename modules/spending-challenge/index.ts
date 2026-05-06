@@ -4,6 +4,7 @@
 export { generateAmounts } from "./lib/generateAmounts";
 export { potState, type PotState } from "./lib/potState";
 export { localISODate, parseLocalISODate, eachDayBetween, dayCountBetween } from "./lib/dates";
+export { formatMoney } from "./lib/format";
 
 export {
   createChallenge,

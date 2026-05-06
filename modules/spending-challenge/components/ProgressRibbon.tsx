@@ -6,6 +6,7 @@ import { SoftCard } from "@/shared/ui/SoftCard";
 import { Body } from "@/shared/ui/Body";
 import { Heading } from "@/shared/ui/Heading";
 import { palette } from "@/shared/theme/colors";
+import { formatMoney } from "../lib/format";
 
 type ProgressRibbonProps = {
   challengeName: string;
@@ -16,7 +17,7 @@ type ProgressRibbonProps = {
   aheadBy: number;
 };
 
-const fmt = (n: number) => `$${n.toFixed(2)}`;
+const fmt = formatMoney;
 
 export function ProgressRibbon({
   challengeName,

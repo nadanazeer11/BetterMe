@@ -9,7 +9,7 @@ import { Body } from "@/shared/ui/Body";
 import { PastelButton } from "@/shared/ui/PastelButton";
 import { palette } from "@/shared/theme/colors";
 import { tileEntry } from "@/shared/theme/motion";
-import { useChallenges } from "@/modules/spending-challenge";
+import { formatMoney, useChallenges } from "@/modules/spending-challenge";
 
 export default function SpendingChallengeList() {
   const router = useRouter();
@@ -60,7 +60,7 @@ export default function SpendingChallengeList() {
                 <SoftCard hue="sage" tone="soft">
                   <Heading size="md">{c.name}</Heading>
                   <Body tone="soft" className="mt-2">
-                    {c.startDate} → {c.endDate} · ${c.totalBudget.toFixed(2)}
+                    {c.startDate} → {c.endDate} · {formatMoney(c.totalBudget)}
                   </Body>
                 </SoftCard>
               </Pressable>

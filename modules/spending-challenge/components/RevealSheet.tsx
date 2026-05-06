@@ -18,6 +18,7 @@ import { PastelButton } from "@/shared/ui/PastelButton";
 import { PastelInput } from "@/shared/ui/PastelInput";
 import { palette } from "@/shared/theme/colors";
 import { potState } from "../lib/potState";
+import { formatMoney } from "../lib/format";
 import { logPotResult, openPot } from "../db/queries";
 import type { Pot } from "../types";
 
@@ -73,7 +74,7 @@ export const RevealSheet = forwardRef<RevealSheetHandle, RevealSheetProps>(funct
   }
 
   const state = potState(pot, todayISO);
-  const fmt = (n: number) => `$${n.toFixed(2)}`;
+  const fmt = formatMoney;
 
   const onOpen = async () => {
     setBusy(true);
