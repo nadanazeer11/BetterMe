@@ -16,6 +16,7 @@ type Module = {
   blurb: string;
   hue: PastelHue;
   status: "live" | "soon";
+  href?: string;
 };
 
 const MODULES: Module[] = [
@@ -24,7 +25,8 @@ const MODULES: Module[] = [
     title: "Spending challenge",
     blurb: "Random daily allowance from a fixed budget. Log what you spent each day.",
     hue: "sage",
-    status: "soon",
+    status: "live",
+    href: "/(app)/spending-challenge",
   },
   {
     id: "daily-rules",
@@ -85,7 +87,12 @@ export default function Home() {
       <View className="gap-5">
         {MODULES.map((m, i) => (
           <MotiView key={m.id} {...tileEntry(120 + i * 80)}>
-            <Pressable onPress={() => haptic.tap()}>
+            <Pressable
+              onPress={() => {
+                haptic.tap();
+                if (m.status === "live" && m.href) router.push(m.href as any);
+              }}
+            >
               <SoftCard hue={m.hue} tone="soft">
                 <View className="flex-row items-center justify-between mb-2">
                   <Heading size="md">{m.title}</Heading>
