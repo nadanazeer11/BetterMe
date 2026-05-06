@@ -85,6 +85,7 @@ Conflict policy: last-write-wins via `updated_at`. `flushOutbox` always runs bef
 
 - Use `<Screen scroll keyboardAware>` for any screen with a `TextInput`. The `keyboardAware` prop wraps the content in `KeyboardAvoidingView` so inputs lift above the keyboard. `scroll` lets the user scroll if content still doesn't fit.
 - Set `keyboardShouldPersistTaps="handled"` (already done in `Screen`) so tapping outside dismisses the keyboard naturally.
+- **Inputs inside a BottomSheetModal:** the regular `TextInput` ignores the sheet's keyboard handling — the keyboard will overlay the input. Pass `TextInputComponent={BottomSheetTextInput}` to `PastelInput` (imported from `@gorhom/bottom-sheet`), and set `keyboardBehavior="interactive"`, `keyboardBlurBehavior="restore"`, `android_keyboardInputMode="adjustResize"` on the `BottomSheetModal`. See `RevealSheet.tsx` for the working setup.
 
 ## Env vars
 

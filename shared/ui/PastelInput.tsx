@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ComponentType } from "react";
 import { Pressable, TextInput, TextInputProps, View } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { palette } from "@/shared/theme/colors";
@@ -7,6 +7,10 @@ import { Body } from "./Body";
 type PastelInputProps = TextInputProps & {
   label?: string;
   error?: string | null;
+  // Optional substitute for the underlying TextInput. Use BottomSheetTextInput
+  // from @gorhom/bottom-sheet when this input lives inside a BottomSheetModal,
+  // otherwise the keyboard will overlay the sheet content.
+  TextInputComponent?: ComponentType<any>;
 };
 
 export function PastelInput({
@@ -14,6 +18,7 @@ export function PastelInput({
   error,
   style,
   secureTextEntry,
+  TextInputComponent = TextInput,
   ...rest
 }: PastelInputProps) {
   const [focused, setFocused] = useState(false);
@@ -29,7 +34,7 @@ export function PastelInput({
         </Body>
       )}
       <View style={{ position: "relative", justifyContent: "center" }}>
-        <TextInput
+        <TextInputComponent
           placeholderTextColor={palette.ink.faint}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
