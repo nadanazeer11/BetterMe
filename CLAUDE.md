@@ -99,6 +99,17 @@ Conflict policy: last-write-wins via `updated_at`. `flushOutbox` always runs bef
 - Session persists via AsyncStorage. The `AuthGate` in `app/_layout.tsx` redirects between `(auth)` and `(app)` route groups based on session.
 - Web SSR uses a no-op storage adapter so static export doesn't crash on AsyncStorage in Node.
 
+## Tests
+
+Jest + ts-jest. Tests live next to the code they test in `**/__tests__/*.test.ts`. Cover **pure logic only** — anything that touches Drizzle, expo-sqlite, or React Native must be tested in the running app, not here.
+
+```bash
+npm test          # run once
+npm run test:watch
+```
+
+When adding a pure-logic helper (a generator, a state derivation, a formatter), write its tests in the same commit. Skip tests for code that orchestrates side effects.
+
 ## Working style
 
 - Build is structured into Phases A–G (see plan file). Each phase is a stopping point.
