@@ -1,4 +1,5 @@
 import { Pressable, View } from "react-native";
+import { useRouter } from "expo-router";
 import { MotiView } from "moti";
 import { Screen } from "@/shared/ui/Screen";
 import { SoftCard } from "@/shared/ui/SoftCard";
@@ -6,7 +7,8 @@ import { Heading } from "@/shared/ui/Heading";
 import { Body } from "@/shared/ui/Body";
 import { tileEntry } from "@/shared/theme/motion";
 import { useHaptic } from "@/shared/hooks/useHaptic";
-import type { PastelHue } from "@/shared/theme/colors";
+import { useAuth } from "@/shared/auth/AuthProvider";
+import { palette, type PastelHue } from "@/shared/theme/colors";
 
 type Module = {
   id: string;
@@ -42,6 +44,9 @@ const MODULES: Module[] = [
 
 export default function Home() {
   const haptic = useHaptic();
+  const router = useRouter();
+  const { user } = useAuth();
+  const firstLetter = (user?.email?.[0] ?? "?").toUpperCase();
 
   return (
     <Screen>
@@ -49,9 +54,32 @@ export default function Home() {
         from={{ opacity: 0, translateY: 8 }}
         animate={{ opacity: 1, translateY: 0 }}
         transition={{ type: "timing", duration: 400 }}
-        className="pt-6 pb-8"
+        className="pt-6 pb-8 flex-row items-center justify-between"
       >
         <Heading size="xl">betterMe</Heading>
+        <Pressable
+          onPress={() => {
+            haptic.tap();
+            router.push("/(app)/profile");
+          }}
+          hitSlop={8}
+        >
+          <View
+            className="w-11 h-11 rounded-full items-center justify-center"
+            style={{
+              backgroundColor: palette.lavender.base,
+              shadowColor: palette.lavender.deep,
+              shadowOpacity: 0.2,
+              shadowRadius: 10,
+              shadowOffset: { width: 0, height: 4 },
+              elevation: 3,
+            }}
+          >
+            <Body className="font-display-bold" style={{ color: palette.ink.base, fontSize: 16 }}>
+              {firstLetter}
+            </Body>
+          </View>
+        </Pressable>
       </MotiView>
 
       <View className="gap-5">
