@@ -9,6 +9,7 @@ import { Body } from "@/shared/ui/Body";
 import { palette } from "@/shared/theme/colors";
 import { useHaptic } from "@/shared/hooks/useHaptic";
 import {
+  ExpensesSection,
   Garden,
   ProgressRibbon,
   RevealSheet,
@@ -86,6 +87,10 @@ export default function ChallengeGarden() {
 
       <View className="mt-6">
         <Garden pots={pots} todayISO={todayISO} onPotPress={onPotPress} />
+      </View>
+
+      <View className="mt-12">
+        <ExpensesSection challengeId={id} />
       </View>
 
       <RevealSheet ref={sheetRef} todayISO={todayISO} />

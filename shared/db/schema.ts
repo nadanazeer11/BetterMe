@@ -44,7 +44,31 @@ export const pots = sqliteTable(
   })
 );
 
+// Out-of-hand expenses: things the user had to pay for during a challenge
+// (fuel, gifts, etc.) that don't count against the daily allowance / pot
+// status. Independent ledger.
+export const expenses = sqliteTable(
+  "expenses",
+  {
+    id: text("id").primaryKey(),
+    challengeId: text("challenge_id")
+      .notNull()
+      .references(() => challenges.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    amount: real("amount").notNull(),
+    spentOn: text("spent_on"),
+    createdAt: text("created_at").notNull(),
+    updatedAt: text("updated_at").notNull(),
+  },
+  (t) => ({
+    challengeIdIdx: index("expenses_challenge_id_idx").on(t.challengeId),
+    spentOnIdx: index("expenses_spent_on_idx").on(t.spentOn),
+  })
+);
+
 export type Challenge = typeof challenges.$inferSelect;
 export type NewChallenge = typeof challenges.$inferInsert;
 export type Pot = typeof pots.$inferSelect;
 export type NewPot = typeof pots.$inferInsert;
+export type Expense = typeof expenses.$inferSelect;
+export type NewExpense = typeof expenses.$inferInsert;

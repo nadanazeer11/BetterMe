@@ -4,13 +4,41 @@
 //
 // One mapper per direction, per table — explicit and easy to audit.
 
-import type { Challenge, Pot, NewChallenge, NewPot } from "@/shared/db/schema";
+import type {
+  Challenge,
+  Pot,
+  Expense,
+  NewChallenge,
+  NewPot,
+  NewExpense,
+} from "@/shared/db/schema";
 import type { Database } from "@/shared/db/database.types";
 
 type ChallengeRow = Database["public"]["Tables"]["challenges"]["Row"];
 type ChallengeInsert = Database["public"]["Tables"]["challenges"]["Insert"];
 type PotRow = Database["public"]["Tables"]["pots"]["Row"];
 type PotInsert = Database["public"]["Tables"]["pots"]["Insert"];
+
+// Inline expense remote shape — switch to Database['public']['Tables']['expenses']
+// after running `npm run db:sync` which regenerates database.types.ts.
+type ExpenseRowRemote = {
+  id: string;
+  challenge_id: string;
+  name: string;
+  amount: number;
+  spent_on: string | null;
+  created_at: string;
+  updated_at: string;
+};
+type ExpenseInsertRemote = {
+  id: string;
+  challenge_id: string;
+  name: string;
+  amount: number;
+  spent_on?: string | null;
+  created_at?: string;
+  updated_at?: string;
+};
 
 // ---------------- challenges ----------------
 
@@ -71,3 +99,30 @@ export function potFromRemote(r: PotRow): NewPot {
     updatedAt: r.updated_at,
   };
 }
+
+// ---------------- expenses ----------------
+
+export function expenseToRemote(e: Expense): ExpenseInsertRemote {
+  return {
+    id: e.id,
+    challenge_id: e.challengeId,
+    name: e.name,
+    amount: e.amount,
+    spent_on: e.spentOn,
+    created_at: e.createdAt,
+    updated_at: e.updatedAt,
+  };
+}
+
+export function expenseFromRemote(r: ExpenseRowRemote): NewExpense {
+  return {
+    id: r.id,
+    challengeId: r.challenge_id,
+    name: r.name,
+    amount: r.amount,
+    spentOn: r.spent_on,
+    createdAt: r.created_at,
+    updatedAt: r.updated_at,
+  };
+}
+

@@ -8,7 +8,7 @@
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export type SyncedTable = "challenges" | "pots";
+export type SyncedTable = "challenges" | "pots" | "expenses";
 export type OutboxEntry = { table: SyncedTable; id: string };
 
 const KEY = "sync.outbox.v1";

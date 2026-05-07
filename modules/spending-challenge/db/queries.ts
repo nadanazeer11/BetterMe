@@ -8,8 +8,22 @@
 import * as Crypto from "expo-crypto";
 import { asc, desc, eq } from "drizzle-orm";
 import { db } from "@/shared/db/client";
-import { challenges, pots, type Challenge, type NewChallenge, type Pot, type NewPot } from "@/shared/db/schema";
-import { enqueuePushChallenge, enqueuePushPot } from "@/shared/sync";
+import {
+  challenges,
+  expenses,
+  pots,
+  type Challenge,
+  type Expense,
+  type NewChallenge,
+  type NewExpense,
+  type NewPot,
+  type Pot,
+} from "@/shared/db/schema";
+import {
+  enqueuePushChallenge,
+  enqueuePushExpense,
+  enqueuePushPot,
+} from "@/shared/sync";
 import { generateAmounts } from "../lib/generateAmounts";
 import { eachDayBetween } from "../lib/dates";
 
@@ -147,4 +161,53 @@ export async function logPotResult(input: {
     .where(eq(pots.id, input.potId));
 
   enqueuePushPot(input.potId);
+}
+
+// ---------------- expenses ----------------
+
+export type CreateExpenseInput = {
+  challengeId: string;
+  name: string;
+  amount: number;
+  spentOn?: string | null; // YYYY-MM-DD
+};
+
+export async function createExpense(input: CreateExpenseInput): Promise<Expense> {
+  const id = Crypto.randomUUID();
+  const now = new Date().toISOString();
+  const row: NewExpense = {
+    id,
+    challengeId: input.challengeId,
+    name: input.name,
+    amount: input.amount,
+    spentOn: input.spentOn ?? null,
+    createdAt: now,
+    updatedAt: now,
+  };
+  await db.insert(expenses).values(row);
+  enqueuePushExpense(id);
+  return row as Expense;
+}
+
+export async function listExpensesForChallenge(challengeId: string): Promise<Expense[]> {
+  return db
+    .select()
+    .from(expenses)
+    .where(eq(expenses.challengeId, challengeId))
+    .orderBy(desc(expenses.spentOn), desc(expenses.createdAt));
+}
+
+export async function updateExpense(input: {
+  id: string;
+  name?: string;
+  amount?: number;
+  spentOn?: string | null;
+}): Promise<void> {
+  const now = new Date().toISOString();
+  const patch: Partial<NewExpense> = { updatedAt: now };
+  if (input.name !== undefined) patch.name = input.name;
+  if (input.amount !== undefined) patch.amount = input.amount;
+  if (input.spentOn !== undefined) patch.spentOn = input.spentOn;
+  await db.update(expenses).set(patch).where(eq(expenses.id, input.id));
+  enqueuePushExpense(input.id);
 }
