@@ -78,6 +78,44 @@ export type Database = {
         }
         Relationships: []
       }
+      expenses: {
+        Row: {
+          amount: number
+          challenge_id: string
+          created_at: string
+          id: string
+          name: string
+          spent_on: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          challenge_id: string
+          created_at?: string
+          id?: string
+          name: string
+          spent_on?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          challenge_id?: string
+          created_at?: string
+          id?: string
+          name?: string
+          spent_on?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expenses_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pots: {
         Row: {
           actual_spent: number | null

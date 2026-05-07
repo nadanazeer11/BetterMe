@@ -18,27 +18,8 @@ type ChallengeRow = Database["public"]["Tables"]["challenges"]["Row"];
 type ChallengeInsert = Database["public"]["Tables"]["challenges"]["Insert"];
 type PotRow = Database["public"]["Tables"]["pots"]["Row"];
 type PotInsert = Database["public"]["Tables"]["pots"]["Insert"];
-
-// Inline expense remote shape — switch to Database['public']['Tables']['expenses']
-// after running `npm run db:sync` which regenerates database.types.ts.
-type ExpenseRowRemote = {
-  id: string;
-  challenge_id: string;
-  name: string;
-  amount: number;
-  spent_on: string | null;
-  created_at: string;
-  updated_at: string;
-};
-type ExpenseInsertRemote = {
-  id: string;
-  challenge_id: string;
-  name: string;
-  amount: number;
-  spent_on?: string | null;
-  created_at?: string;
-  updated_at?: string;
-};
+type ExpenseRow = Database["public"]["Tables"]["expenses"]["Row"];
+type ExpenseInsert = Database["public"]["Tables"]["expenses"]["Insert"];
 
 // ---------------- challenges ----------------
 
@@ -102,7 +83,7 @@ export function potFromRemote(r: PotRow): NewPot {
 
 // ---------------- expenses ----------------
 
-export function expenseToRemote(e: Expense): ExpenseInsertRemote {
+export function expenseToRemote(e: Expense): ExpenseInsert {
   return {
     id: e.id,
     challenge_id: e.challengeId,
@@ -114,7 +95,7 @@ export function expenseToRemote(e: Expense): ExpenseInsertRemote {
   };
 }
 
-export function expenseFromRemote(r: ExpenseRowRemote): NewExpense {
+export function expenseFromRemote(r: ExpenseRow): NewExpense {
   return {
     id: r.id,
     challengeId: r.challenge_id,

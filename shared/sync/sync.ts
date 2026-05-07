@@ -26,10 +26,6 @@ import {
   potToRemote,
 } from "./converters";
 
-// The "expenses" table type lives in database.types.ts after the user runs
-// `npm run db:sync`. Until then we cast — the conversion is correct at runtime.
-const supabaseAny = supabase as any;
-
 // ---------------- pushes (local → cloud) ----------------
 
 async function pushChallenge(id: string): Promise<void> {
@@ -66,7 +62,7 @@ async function pushExpense(id: string): Promise<void> {
     await outbox.remove("expenses", id);
     return;
   }
-  const { error } = await supabaseAny.from("expenses").upsert(expenseToRemote(rows[0]));
+  const { error } = await supabase.from("expenses").upsert(expenseToRemote(rows[0]));
   if (error) {
     if (__DEV__) console.warn("[sync] pushExpense failed", id, error.message);
     return;
@@ -131,7 +127,7 @@ async function pullPots(): Promise<void> {
 
 async function pullExpenses(): Promise<void> {
   const since = await lastSync.getSince("expenses");
-  const { data, error } = await supabaseAny
+  const { data, error } = await supabase
     .from("expenses")
     .select("*")
     .gt("updated_at", since)
